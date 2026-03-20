@@ -3,9 +3,8 @@
 #include <sstream>
 using namespace std;
 
-// -------------------------------------------------------
-//  CLASE CANCION  —  representa cada nodo de la lista
-// -------------------------------------------------------
+//  CLASE CANCION  â€”  representa cada nodo de la lista, contiene los atributos y metodos de cada Cancion
+
 class Cancion {
 public:
     string  titulo;
@@ -17,7 +16,7 @@ public:
     Cancion(string t, string a, int d)
         : titulo(t), artista(a), duracion(d), sig(NULL), ant(NULL) {}
 
-    // formatea segundos a MM:SS para mostrar
+    // cambia el formato de segundos a MM:SS
     string getDuracion() {
         int m = duracion / 60, s = duracion % 60;
         ostringstream ss;
@@ -26,22 +25,20 @@ public:
         return ss.str();
     }
 
-    // devuelve una línea con los datos de la cancion
+    // devuelve una lÃ­nea con los datos de la cancion
     string toString() {
         return titulo + " - " + artista + " [" + getDuracion() + "]";
     }
 };
 
-// -------------------------------------------------------
-//  CLASE LISTA  —  lista doblemente enlazada de Canciones
-// -------------------------------------------------------
+//  CLASE LISTA  â€”  Utiliza una lista doblemente enlazada de Canciones
 class Lista {
     Cancion* primero;
     Cancion* ultimo;
     Cancion* actual;   // cancion en reproduccion
     int      total;
 
-    // imprime una fila de la tabla, marcando la cancion actual con >>>
+    // imprime una fila de la tabla, marcando la cancion actual con ">>>"
     void imprimirFila(Cancion* c, int i) {
         string info = c->toString();
         if ((int)info.size() > 36) info = info.substr(0, 33) + "...";
@@ -84,7 +81,7 @@ public:
         ultimo = actual = NULL;
     }
 
-    // -- Insertar al inicio ------------------------------------------------
+    // Insertar al inicio ------------------------------------------------
     void insertarInicio(string t, string a, int d) {
         Cancion* n = new Cancion(t, a, d);
         if (!primero) {
@@ -98,7 +95,7 @@ public:
         cout << "  [+] Insertada al inicio: \"" << t << "\"\n";
     }
 
-    // -- Insertar al final -------------------------------------------------
+    // Insertar al final -------------------------------------------------
     void insertarFinal(string t, string a, int d) {
         Cancion* n = new Cancion(t, a, d);
         if (!primero) {
@@ -112,7 +109,7 @@ public:
         cout << "  [+] Insertada al final: \"" << t << "\"\n";
     }
 
-    // -- Buscar por titulo -------------------------------------------------
+    // Buscar por titulo -------------------------------------------------
     void buscar(string titulo) {
         if (!primero) { cout << "  Lista vacia.\n"; return; }
         Cancion* t = primero; int pos = 1;
@@ -128,7 +125,7 @@ public:
         cout << "  No encontrada: \"" << titulo << "\"\n";
     }
 
-    // -- Eliminar por titulo -----------------------------------------------
+    // Eliminar por titulo -----------------------------------------------
     void eliminar(string titulo) {
         if (!primero) { cout << "  Lista vacia.\n"; return; }
         Cancion* t = primero;
@@ -156,7 +153,7 @@ public:
         cout << "  No encontrada: \"" << titulo << "\"\n";
     }
 
-    // -- Navegar -----------------------------------------------------------
+    // Navegar -----------------------------------------------------------
     void siguiente() {
         if (!actual) { cout << "  Lista vacia.\n"; return; }
         actual = (actual->sig != NULL) ? actual->sig : primero; // wrap
@@ -169,11 +166,11 @@ public:
         cout << "  << Ahora: " << actual->toString() << "\n";
     }
 
-    // -- Mostrar -----------------------------------------------------------
+    // Mostrar -----------------------------------------------------------
     void mostrarInicioFin() { mostrar("PRIMERO -> ULTIMO", false); }
     void mostrarFinInicio() { mostrar("ULTIMO -> PRIMERO", true);  }
 
-    // -- Consultar extremos ------------------------------------------------
+    // Consultar extremos ------------------------------------------------
     void consultarExtremos() {
         if (!primero) { cout << "  Lista vacia.\n"; return; }
         cout << "  Primero: " << primero->toString() << "\n";
@@ -184,14 +181,12 @@ public:
     string getActual() { return actual ? actual->titulo : "ninguna"; }
 };
 
-// -------------------------------------------------------
-//  CLASE REPRODUCTOR  —  contiene la lista y el menu
-// -------------------------------------------------------
+//  CLASE REPRODUCTOR  â€”  contiene la lista y el menu
 class Reproductor {
     Lista  lista;
     string nombre;
 
-    // pide los datos de una cancion al usuario
+    // pide los datos de una cancion al usuario para crear una instancia de cancion
     void leerCancion(string &titulo, string &artista, int &duracion) {
         cout << "  Titulo:         "; getline(cin, titulo);
         cout << "  Artista:        "; getline(cin, artista);
@@ -205,7 +200,7 @@ public:
         int    op;
         string titulo, artista;
         int    duracion;
-
+        // Menu interactivo
         do {
             cout << "\n  ========================================\n";
             cout << "   REPRODUCTOR: " << nombre << "\n";

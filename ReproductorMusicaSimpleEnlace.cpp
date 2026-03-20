@@ -3,9 +3,8 @@
 #include <sstream>
 using namespace std;
 
-// -------------------------------------------------------
-//  CLASE CANCION  —  nodo de la lista simple
-// -------------------------------------------------------
+
+//  Clase Cancion  â€”  nodo de la lista simple
 class Cancion {
 public:
     string   titulo;
@@ -29,9 +28,8 @@ public:
     }
 };
 
-// -------------------------------------------------------
-//  CLASE LISTA  —  lista simplemente enlazada de Canciones
-// -------------------------------------------------------
+
+//  Clase Lista  â€”  lista simplemente enlazada de canciones
 class Lista {
     Cancion* primero;
     Cancion* ultimo;
@@ -59,7 +57,7 @@ public:
         ultimo = NULL;
     }
 
-    // -- Insertar al inicio ------------------------------------------------
+    // Insertar al inicio
     void insertarInicio(string t, string a, int d) {
         Cancion* n = new Cancion(t, a, d);
         if (!primero) {
@@ -72,7 +70,7 @@ public:
         cout << "  [+] Insertada al inicio: \"" << t << "\"\n";
     }
 
-    // -- Insertar al final -------------------------------------------------
+    // Insertar al final
     void insertarFinal(string t, string a, int d) {
         Cancion* n = new Cancion(t, a, d);
         if (!primero) {
@@ -85,7 +83,7 @@ public:
         cout << "  [+] Insertada al final: \"" << t << "\"\n";
     }
 
-    // -- Buscar por titulo -------------------------------------------------
+    // Buscar por titulo
     void buscar(string titulo) {
         if (!primero) { cout << "  Lista vacia.\n"; return; }
         Cancion* t = primero;
@@ -102,11 +100,11 @@ public:
         cout << "  No encontrada: \"" << titulo << "\"\n";
     }
 
-    // -- Eliminar por titulo -----------------------------------------------
+    // Eliminar por titulo 
     void eliminar(string titulo) {
         if (!primero) { cout << "  Lista vacia.\n"; return; }
 
-        // es la primera
+        // es la primera cancion
         if (primero->titulo == titulo) {
             Cancion* aux = primero;
             primero = primero->sig;
@@ -117,7 +115,7 @@ public:
             return;
         }
 
-        // buscar en el resto — necesitamos ant para reconectar
+        // buscar en el resto â€” necesitamos ant para reconectar
         Cancion* ant = primero;
         Cancion* aux = primero->sig;
         while (aux != NULL) {
@@ -135,7 +133,7 @@ public:
         cout << "  No encontrada: \"" << titulo << "\"\n";
     }
 
-    // -- Mostrar PRIMERO -> ULTIMO -----------------------------------------
+    //  Mostrar Primero a Ultimo
     void mostrar() {
         if (!primero) { cout << "  Lista vacia.\n"; return; }
         string tit = "PRIMERO -> ULTIMO";
@@ -153,7 +151,7 @@ public:
              << "\"  |  Ultimo: \"" << ultimo->titulo << "\"\n\n";
     }
 
-    // -- Consultar extremos ------------------------------------------------
+    // Consultar extremos
     void consultarExtremos() {
         if (!primero) { cout << "  Lista vacia.\n"; return; }
         cout << "  Primero: " << primero->toString() << "\n";
@@ -164,9 +162,9 @@ public:
     string getPrimero() { return primero ? primero->titulo : "ninguna"; }
 };
 
-// -------------------------------------------------------
-//  CLASE REPRODUCTOR  —  contiene la lista y el menu
-// -------------------------------------------------------
+
+//  Clase Reproductor  â€”  contiene la lista de canciones y el menu principal 
+
 class Reproductor {
     Lista  lista;
     string nombre;
@@ -228,9 +226,8 @@ public:
     }
 };
 
-// -------------------------------------------------------
-//  main
-// -------------------------------------------------------
+
+//  Main, llama al metodo menu() para poder interactuar con el reproductor de canciones
 int main() {
     cout << "\n  ========================================\n";
     cout << "    REPRODUCTOR DE MUSICA - LISTA SIMPLE\n";

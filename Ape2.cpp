@@ -116,4 +116,122 @@ public://clase principal de estudiantes donde estableceremos que es y como manej
         cout << "  Nombre : " << nombres << " " << apellidos << "\n";
         cout << "  Cedula : " << cedula << "\n";
         cout << "  Edad   : " << calcularEdad() << " anos\n";
-    }//imoresion de datos ingresados
+    }
+//impresion de datos ingresados
+
+void mostrarNotas() const {
+        if (cantNotas == 0) { cout << "    (ninguna)\n"; return; }
+        NodoNota* actual = notas;
+        int i = 1;
+        while (actual != nullptr) {
+            cout << "    [" << i << "] " << fixed << setprecision(2) << actual->valor << "\n";
+            actual = actual->siguiente;
+            i++;
+        }
+    }
+};
+
+
+// ============================================================
+//  Curso  –  lista enlazada de estudiantes
+// ============================================================
+class Curso {
+public:
+    string nombre;
+    string id;
+
+    Estudiante* cabeza;
+    int cantidad;
+    static const int MAX_ESTUDIANTES = 20;
+
+    Curso(string nom = "Curso General", string identificador = "C001") {
+        nombre   = nom;
+        id       = identificador;
+        cabeza   = nullptr;
+        cantidad = 0;
+    }
+
+    ~Curso() {
+        Estudiante* actual = cabeza;
+        while (actual != nullptr) {
+            Estudiante* sig = actual->siguiente;
+            delete actual;
+            actual = sig;
+        }
+    }
+
+    int getCantidad() const { return cantidad; }
+
+    Estudiante* buscar(const string& cedula) const {
+        Estudiante* actual = cabeza;
+        while (actual != nullptr) {
+            if (actual->cedula == cedula) return actual;
+            actual = actual->siguiente;
+        }
+        return nullptr;
+    }
+
+    Estudiante* obtenerPorIndice(int indice) const {
+        Estudiante* actual = cabeza;
+        int pos = 1;
+        while (actual != nullptr) {
+            if (pos == indice) return actual;
+            actual = actual->siguiente;
+            pos++;
+        }
+        return nullptr;
+    }
+
+    bool agregarEstudiante(Estudiante* e) {
+        if (cantidad >= MAX_ESTUDIANTES) return false;
+        if (cabeza == nullptr) {
+            cabeza = e;
+        } else {
+            Estudiante* actual = cabeza;
+            while (actual->siguiente != nullptr) actual = actual->siguiente;
+            actual->siguiente = e;
+        }
+        cantidad++;
+        return true;
+    }
+
+    bool eliminarEstudiante(int indice) {
+        if (cabeza == nullptr || indice < 1 || indice > cantidad) return false;
+        if (indice == 1) {
+            Estudiante* aBorrar = cabeza;
+            cabeza = cabeza->siguiente;
+            delete aBorrar;
+        } else {
+            Estudiante* anterior = obtenerPorIndice(indice - 1);
+            Estudiante* aBorrar  = anterior->siguiente;
+            anterior->siguiente  = aBorrar->siguiente;
+            delete aBorrar;
+        }
+        cantidad--;
+        return true;
+    }
+
+    void listarEstudiantes() const {
+        if (cabeza == nullptr) {
+            cout << "  (No hay estudiantes registrados)\n";
+            return;
+        }
+        cout << left
+             << setw(4)  << "N"
+             << setw(12) << "Cedula"
+             << setw(18) << "Nombres"
+             << setw(18) << "Apellidos"
+             << setw(12) << "F. Nac." << "\n";
+        cout << string(64, '-') << "\n";
+        Estudiante* actual = cabeza;
+        int i = 1;
+        while (actual != nullptr) {
+            cout << setw(4)  << i
+                 << setw(12) << actual->cedula
+                 << setw(18) << actual->nombres
+                 << setw(18) << actual->apellidos
+                 << setw(12) << actual->fechaNacimiento << "\n";
+            actual = actual->siguiente;
+            i++;
+        }
+    }

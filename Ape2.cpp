@@ -376,3 +376,147 @@ private:
                 if (!tmp.empty()) e->fechaNacimiento = tmp;
                 cout << "\n  Datos actualizados.\n";
                 pausar();
+} else if (op == 3) {
+                if (curso.getCantidad() == 0) {
+                    cout << "\n  No hay estudiantes para eliminar.\n";
+                    pausar(); continue;
+                }
+                bool seguir = true;
+                while (seguir && curso.getCantidad() > 0) {
+                    curso.listarEstudiantes();
+                    int idx = leerEntero("Numero del estudiante a eliminar", 1, curso.getCantidad());
+                    Estudiante* e = curso.obtenerPorIndice(idx);
+                    if (!e) { cout << "\n  No encontrado.\n"; break; }
+                    if (preguntar("Confirma eliminar a " + e->nombres + " " + e->apellidos + "?")) {
+                        curso.eliminarEstudiante(idx);
+                        cout << "\n  Estudiante eliminado.\n";
+                    }
+                    if (curso.getCantidad() == 0) break;
+                    seguir = preguntar("Desea eliminar otro estudiante?");
+                }
+                pausar();
+
+            } else {
+                salir = true;
+            }
+        }
+    }
+
+    // Opcion 2
+    void menuCalificaciones() {
+        bool salir = false;
+        while (!salir) {
+            encabezado("REGISTRO DE CALIFICACIONES");
+            string ced = leerCadena("Cedula del estudiante");
+            Estudiante* e = curso.buscar(ced);
+            if (e == nullptr) {
+                cout << "\n  No se encontro un estudiante con esa cedula.\n";
+                if (!preguntar("Desea intentar con otra cedula?")) salir = true;
+                continue;
+            }
+            cout << "\n";
+            e->mostrarDatos();
+            bool terminar = false;
+            while (!terminar) {
+                cout << "\n  Calificaciones registradas:\n";
+                e->mostrarNotas();
+                if (e->cantNotas >= Estudiante::MAX_NOTAS) {
+                    cout << "\n  Se han ingresado todas las calificaciones posibles (7/7).\n";
+                    pausar(); break;
+                }
+                cout << "\n  1. Agregar calificacion\n";
+                cout << "  2. Modificar calificacion\n";
+                cout << "  3. Eliminar calificacion\n";
+                cout << "  4. Volver\n";
+                int op = leerEntero("Opcion", 1, 4);
+                if (op == 1) {
+                    double nota = leerNota("Calificacion");
+                    e->agregarNota(nota);
+                    cout << "  Calificacion agregada.\n";
+                    if (e->cantNotas >= Estudiante::MAX_NOTAS) {
+                        cout << "  Maximo de calificaciones alcanzado (7/7).\n";
+                        pausar(); terminar = true;
+                    }
+                } else if (op == 2) {
+                    if (e->cantNotas == 0) { cout << "  No hay calificaciones.\n"; continue; }
+                    int idx  = leerEntero("Numero de calificacion a modificar", 1, e->cantNotas);
+                    double n = leerNota("Nueva calificacion");
+                    e->modificarNota(idx, n);
+                    cout << "  Calificacion actualizada.\n";
+                } else if (op == 3) {
+                    if (e->cantNotas == 0) { cout << "  No hay calificaciones.\n"; continue; }
+                    int idx = leerEntero("Numero de calificacion a eliminar", 1, e->cantNotas);
+                    e->eliminarNota(idx);
+                    cout << "  Calificacion eliminada.\n";
+                } else {
+                    terminar = true;
+                }
+            }
+            salir = true;
+        }
+    }
+
+    // Opcion 3
+    void mostrarPromedioEstudiante() {
+        encabezado("PROMEDIO DE UN ESTUDIANTE");
+        string ced = leerCadena("Cedula del estudiante");
+        Estudiante* e = curso.buscar(ced);
+        if (e == nullptr) {
+            cout << "\n  No se encontro un estudiante con esa cedula.\n";
+        } else {
+            cout << "\n";
+            e->mostrarDatos();
+            if (e->cantNotas == 0)
+                cout << "  Promedio  : Sin calificaciones registradas\n";
+            else
+                cout << "  Promedio  : " << fixed << setprecision(2) << e->calcularPromedio() << "\n";
+        }
+        pausar();
+    }
+
+    // Opcion 4
+    void mostrarPromedioCurso() {
+        encabezado("PROMEDIO GENERAL DEL CURSO");
+        if (!curso.hayNotas())
+            cout << "\n  No se han registrado calificaciones de estudiantes.\n";
+        else
+            cout << "\n  Promedio general: " << fixed << setprecision(2) << curso.promedioCurso() << "\n";
+        pausar();
+    }
+
+public:
+    ConsoleManager() : curso("Programacion I", "INF-101") {}
+
+    void mostrarMenu() {
+        bool activo = true;
+        while (activo) {
+            encabezado("GESTOR DE PERSONAS");
+            cout << "  1. Estudiantes\n";
+            cout << "  2. Registro de calificaciones\n";
+            cout << "  3. Determinar el promedio de notas de un estudiante\n";
+            cout << "  4. Determinar el promedio de notas del curso\n";
+            cout << "  0. Salir\n";
+
+            int op = leerEntero("Teclee su opcion", 0, 4);
+
+            switch (op) {
+                case 1: menuEstudiantes();           break;
+                case 2: menuCalificaciones();        break;
+                case 3: mostrarPromedioEstudiante(); break;
+                case 4: mostrarPromedioCurso();      break;
+                case 0: activo = false;              break;
+            }
+        }
+        cout << "\n  Hasta luego.\n\n";
+    }
+};
+
+
+// ============================================================
+//  main  –  solo instancia y lanza ConsoleManager
+// ============================================================
+int main() {
+    ConsoleManager app;
+    app.mostrarMenu();
+    return 0;
+}

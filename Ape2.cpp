@@ -235,3 +235,144 @@ public:
             i++;
         }
     }
+ouble promedioCurso() const {
+        double suma  = 0;
+        int    total = 0;
+        Estudiante* est = cabeza;
+        while (est != nullptr) {
+            NodoNota* n = est->notas;
+            while (n != nullptr) { suma += n->valor; total++; n = n->siguiente; }
+            est = est->siguiente;
+        }
+        return (total == 0) ? -1.0 : suma / total;
+    }
+
+    bool hayNotas() const {
+        Estudiante* actual = cabeza;
+        while (actual != nullptr) {
+            if (actual->cantNotas > 0) return true;
+            actual = actual->siguiente;
+        }
+        return false;
+    }
+};
+
+
+// ============================================================
+//  ConsoleManager  –  todos los menus por consola
+// ============================================================
+class ConsoleManager {
+private:
+    Curso curso;
+
+    void limpiarBuffer() const { cin.ignore(1000, '\n'); }
+
+    void pausar() const {
+        cout << "\n  Presione ENTER para continuar...";
+        limpiarBuffer();
+        cin.get();
+    }
+
+    void encabezado(const string& titulo) const {
+        cout << "\n========================================\n";
+        cout << "  " << titulo << "\n";
+        cout << "========================================\n";
+    }
+
+    string leerCadena(const string& etiqueta) const {
+        string valor;
+        cout << "  " << etiqueta << ": ";
+        getline(cin, valor);
+        return valor;
+    }
+
+    double leerNota(const string& etiqueta) const {
+        double v;
+        while (true) {
+            cout << "  " << etiqueta << " (0-10): ";
+            cin >> v;
+            if (cin.fail() || v < 0 || v > 10) {
+                cin.clear(); limpiarBuffer();
+                cout << "  Valor invalido. Ingrese un numero entre 0 y 10.\n";
+            } else { limpiarBuffer(); return v; }
+        }
+    }
+
+    int leerEntero(const string& etiqueta, int min, int max) const {
+        int v;
+        while (true) {
+            cout << "  " << etiqueta << " (" << min << "-" << max << "): ";
+            cin >> v;
+            if (cin.fail() || v < min || v > max) {
+                cin.clear(); limpiarBuffer();
+                cout << "  Opcion invalida.\n";
+            } else { limpiarBuffer(); return v; }
+        }
+    }
+
+    bool preguntar(const string& msg) const {
+        char r;
+        cout << "  " << msg << " (s/n): ";
+        cin >> r;
+        limpiarBuffer();
+        return r == 's' || r == 'S';
+    }
+
+    // Opcion 1
+    void menuEstudiantes() {
+        bool salir = false;
+        while (!salir) {
+            encabezado("GESTION DE ESTUDIANTES");
+            curso.listarEstudiantes();
+            cout << "\n  1. Ingresar estudiante\n";
+            cout << "  2. Modificar estudiante\n";
+            cout << "  3. Eliminar estudiante\n";
+            cout << "  4. Volver\n";
+
+            int op = leerEntero("Opcion", 1, 4);
+
+            if (op == 1) {
+                bool seguir = true;
+                while (seguir) {
+                    if (curso.getCantidad() >= Curso::MAX_ESTUDIANTES) {
+                        cout << "\n  El curso ya tiene el maximo de "
+                             << Curso::MAX_ESTUDIANTES << " estudiantes.\n";
+                        pausar(); break;
+                    }
+                    encabezado("NUEVO ESTUDIANTE");
+                    string ced = leerCadena("Cedula");
+                    if (curso.buscar(ced) != nullptr) {
+                        cout << "  Ya existe un estudiante con esa cedula.\n";
+                        pausar(); continue;
+                    }
+                    string nom   = leerCadena("Nombres");
+                    string ape   = leerCadena("Apellidos");
+                    string fecha = leerCadena("Fecha de nacimiento (DD/MM/AAAA)");
+                    Estudiante* e = new Estudiante(ced, nom, ape, fecha);
+                    curso.agregarEstudiante(e);
+                    cout << "\n  Estudiante registrado correctamente.\n";
+                    seguir = preguntar("Desea ingresar otro estudiante?");
+                }
+
+            } else if (op == 2) {
+                if (curso.getCantidad() == 0) {
+                    cout << "\n  No hay estudiantes registrados.\n";
+                    pausar(); continue;
+                }
+                int idx = leerEntero("Numero del estudiante a modificar", 1, curso.getCantidad());
+                Estudiante* e = curso.obtenerPorIndice(idx);
+                if (!e) { cout << "\n  No encontrado.\n"; pausar(); continue; }
+                cout << "\n  Datos actuales:\n";
+                e->mostrarDatos();
+                cout << "\n  Ingrese los nuevos datos (ENTER para mantener el actual):\n";
+                cout << "  Nombres [" << e->nombres << "]: ";
+                string tmp; getline(cin, tmp);
+                if (!tmp.empty()) e->nombres = tmp;
+                cout << "  Apellidos [" << e->apellidos << "]: ";
+                getline(cin, tmp);
+                if (!tmp.empty()) e->apellidos = tmp;
+                cout << "  Fecha nacimiento [" << e->fechaNacimiento << "]: ";
+                getline(cin, tmp);
+                if (!tmp.empty()) e->fechaNacimiento = tmp;
+                cout << "\n  Datos actualizados.\n";
+                pausar();
